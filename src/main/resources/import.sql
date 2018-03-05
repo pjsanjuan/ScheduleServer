@@ -1,0 +1,1 @@
+# INSERT INTO server.user (id, email, username) VALUES (1, 'psanjuan06.sj@gmail.com', 'extreme112');
