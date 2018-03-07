@@ -17,6 +17,9 @@ public class Task {
     @Column(name = "NAME")
     private String name;
 
+    public Task() {
+    }
+
     public Task(String name) {
         this.name = name.toUpperCase();
     }
