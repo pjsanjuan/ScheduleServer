@@ -19,6 +19,10 @@ public class User {
     @Column(name = "EMAIL")
     private String email;
 
+
+    public User() {
+    }
+
     public User(String username, String email) {
         this.username = username;
         this.email = email;
@@ -73,5 +77,14 @@ public class User {
     public int hashCode() {
 
         return Objects.hash(id, username, email);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
