@@ -22,7 +22,7 @@ public class UserController {
     @GetMapping("/")
     ResponseEntity<List<User>> getUsers() {
         List<User> users = userRepository.findAll();
-        return new ResponseEntity<>(users, org.springframework.http.HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping("/")

@@ -1,21 +1,23 @@
 package com.patrick.User;
 
 
-import javax.persistence.Id;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "USER_ID")
     private Long id;
-    private String username;
-    private String email;
 
-    public User() {
-    }
+    @Column(name = "USERNAME")
+    private String username;
+
+    @Column(name = "EMAIL")
+    private String email;
 
     public User(String username, String email) {
         this.username = username;
@@ -48,20 +50,28 @@ public class User {
 
     /**
      * Merges the other's fields into this as long as the field is not null.
+     *
      * @param other Other User object to merge data from
      */
-    public void merge(User other){
+    public void merge(User other) {
         this.id = other.id != null ? other.id : this.id;
         this.username = other.username != null ? other.username : this.username;
-        this.email = other.email != null ? other.email: this.email;
+        this.email = other.email != null ? other.email : this.email;
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email=" + email +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, username, email);
     }
 }
