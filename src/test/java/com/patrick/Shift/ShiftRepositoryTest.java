@@ -39,8 +39,6 @@ public class ShiftRepositoryTest {
 
         Shift s = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), u, t);
         shiftRepository.save(s);
-
-        System.out.println(s);
     }
 
     @Test
@@ -50,21 +48,11 @@ public class ShiftRepositoryTest {
         Task t = new Task("Cleanup");
         taskRepository.save(t); //has ID of 1
         Shift s = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), u, t);
-        shiftRepository.save(s);
+        entityManager.persist(s);
+        entityManager.flush();
 
         shiftRepository.delete(s);
 
         assertEquals(0, shiftRepository.count());
     }
-
-//    public void modifyShift() {
-//        Shift s = shiftRepository.getOne(1L);
-//
-//        Shift modifiedShift = new Shift(s.getStart(), s.getEnd(), s.getU(), s.getTask());
-//        modifiedShift.setId(1L);
-//        shiftRepository.save(modifiedShift);
-//
-//        Shift found = shiftRepository.getOne(1L);
-//        assertTrue(modifiedShift.equals(found));
-//    }
 }
