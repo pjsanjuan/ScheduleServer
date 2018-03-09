@@ -1,22 +1,19 @@
 package com.patrick.User;
 
-
-import lombok.Data;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     private Long id;
 
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", unique = true)
     private String username;
 
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL", unique = true)
     private String email;
 
 
@@ -24,8 +21,8 @@ public class User {
     }
 
     public User(String username, String email) {
-        this.username = username;
-        this.email = email;
+        this.username = username.trim().toLowerCase();
+        this.email = email.trim().toLowerCase();
     }
 
     public Long getId() {
