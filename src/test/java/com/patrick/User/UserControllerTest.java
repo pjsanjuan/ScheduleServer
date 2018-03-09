@@ -37,19 +37,23 @@ public class UserControllerTest {
 
     @Before
     public void setUp() {
-        Mockito.when(userService.fetchAll()).thenReturn(new ArrayList<User>() {{
-            add(new User("testuser", "test@gmail.com"));
-            add(new User("Rick James", "rj@gmail.com"));
-        }});
         Mockito.when(userService.fetchOne(1L)).thenReturn(new User("testuser", "test@gmail.com"));
-        Mockito.doNothing()
-                .doThrow(new DataIntegrityViolationException(""))
-                .when(userService).createOne(new User("testuser", "test@gmail.com"));
     }
 
     @Test
     public void getUsers() throws Exception {
-        mvc.perform(get("/users")).andExpect(MockMvcResultMatchers.status().isOk());
+        Mockito.when(userService.fetchAll()).thenReturn(new ArrayList<User>() {{
+            add(new User("testuser", "test@gmail.com"));
+            add(new User("Rick James", "rj@gmail.com"));
+        }});
+        mvc.perform(get("/users")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    }
+
+    @Test
+    public void getOneUser() throws Exception {
+        Mockito.doReturn(new User("test", "test@gmail.com"))
+                .when(userService).fetchOne(1L);
+        mvc.perform(get("/users/1")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
 
     @Test
@@ -66,8 +70,12 @@ public class UserControllerTest {
 
     @Test
     public void createUser_Duplicate() throws Exception {
+        User u = new User("testuser", "test@gmail.com");
+        Mockito.doNothing()
+                .doThrow(new DataIntegrityViolationException(""))
+                .when(userService).createOne(u);
+
         ObjectMapper objectMapper = new ObjectMapper();
-        User u = new User("Harrison Ford", "hf@gmail.com");
         String jsonString = objectMapper.writeValueAsString(u);
 
         //First create call
@@ -87,8 +95,9 @@ public class UserControllerTest {
 
     @Test
     public void updateUser() throws Exception {
+        User u = new User("Harrison Ford", "hf@gmail.com");
+        Mockito.doNothing().when(userService).modifyOne(u);
         ObjectMapper objectMapper = new ObjectMapper();
-        User u = new User("testuser", "test@gmail.com");
         String jsonString = objectMapper.writeValueAsString(u);
 
         mvc.perform(put("/users/1")
