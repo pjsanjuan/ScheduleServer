@@ -33,7 +33,7 @@ public class UserRepositoryTest {
 
     @Test
     public void createUser(){
-        userRepository.createUser("testuser", "test@gmail.com");
+        userRepository.saveAndFlush(new User("testuser", "test@gmail.com"));
     }
 
     @Test
