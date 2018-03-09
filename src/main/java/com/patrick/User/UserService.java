@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
+
 public interface UserService {
     //FetchAll
     Collection<User> fetchAll();
