@@ -19,13 +19,13 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     ResponseEntity<List<User>> getUsers() {
         List<User> users = userRepository.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             userRepository.save(user);
