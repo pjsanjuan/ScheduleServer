@@ -1,7 +1,5 @@
 package com.patrick.Shift;
 
-import com.patrick.User.User;
-import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -14,6 +12,11 @@ import java.util.Optional;
 public class ShiftServiceImpl implements ShiftService {
 
     private ShiftRepository shiftRepository;
+
+    @Autowired
+    public ShiftServiceImpl(ShiftRepository shiftRepository) {
+        this.shiftRepository = shiftRepository;
+    }
 
     @Override
     public Collection<Shift> fetchAll() {
