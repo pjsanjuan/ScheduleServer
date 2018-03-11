@@ -75,3 +75,5 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 
 src/test/java/com/patrick/DeleteTest.java
+/ScheduleServer.iml
+/src/test/java/com/patrick/DeleteTest.java

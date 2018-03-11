@@ -1,6 +1,8 @@
 package com.patrick.Shift;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.patrick.Task.Task;
 import com.patrick.User.User;
 import org.junit.After;
@@ -10,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -30,6 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ShiftControllerTest {
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     private MockMvc mvc;
 
     @MockBean
@@ -40,13 +47,14 @@ public class ShiftControllerTest {
 
     private User testUser1 = new User("Rick", "r@gmail.com");
     private User testUser2 = new User("Morty", "m@gmail.com");
-    private Shift testShift1 = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), testUser1, new Task("Cleanup"));
-    private Shift testShift2 = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), testUser2, new Task("Pickup"));
+    private Shift testShift1 = new Shift(OffsetDateTime.parse("2018-03-10T18:38:11.738-08:00"),
+            OffsetDateTime.parse("2018-03-10T18:38:11.738-08:00"), testUser1, new Task("Cleanup"));
+    private Shift testShift2 = new Shift(OffsetDateTime.parse("2018-03-10T18:38:11.738-08:00"),
+            OffsetDateTime.parse("2018-03-10T18:38:11.738-08:00"), testUser2, new Task("Pickup"));
 
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @After
-    public void teardown(){
+    public void teardown() {
         Mockito.reset(shiftService);
     }
 
@@ -71,23 +79,23 @@ public class ShiftControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(testShift1))
         ).andExpect(status().isCreated());
-        Mockito.verify(shiftService).createOne(testShift1);
+        Mockito.verify(shiftService).createOne(objectMapper.readValue(objectMapper.writeValueAsString(testShift1), Shift.class));
     }
 
     @Test
-    public void createShift_Duplicate()throws Exception {
+    public void createShift_Duplicate() throws Exception {
         Mockito.doNothing()
                 .doThrow(new DataIntegrityViolationException(""))
-                .when(shiftService).createOne(testShift1);
+                .when(shiftService).createOne(Mockito.any());
 
         //First create call
-        mvc.perform(post("/users")
+        mvc.perform(post("/shifts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(testShift1))
         ).andExpect(status().isCreated()).andReturn();
 
         //Duplicate create call
-        mvc.perform(post("/users")
+        mvc.perform(post("/shifts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(testShift1))
         ).andExpect(status().isConflict()).andReturn();
