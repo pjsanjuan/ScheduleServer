@@ -29,7 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new AuthenticationFilter(authenticationManager()), AuthenticationFilter.class);
+                .addFilter(new AuthenticationFilter(authenticationManager()))
+                .addFilter(new AuthorizationFilter(authenticationManager()));
     }
 
     @Override
@@ -38,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService);
     }
 
-//    https://www.harinathk.com/spring/no-passwordencoder-mapped-id-null/
+    //    https://www.harinathk.com/spring/no-passwordencoder-mapped-id-null/
     @SuppressWarnings("deprecation")
     @Bean
     public static NoOpPasswordEncoder passwordEncoder() {

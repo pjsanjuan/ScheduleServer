@@ -1,19 +1,22 @@
 package com.patrick.Security;
 
+import com.patrick.Role.Role;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security
         .authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 
@@ -30,8 +33,9 @@ class TokenAuthenticationService {
      * @param username Username of authenticated principal
      */
     static void addAuthentication(HttpServletResponse res, String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
-        Map claims = new HashMap<String, Collection>(){{
-            put("role", grantedAuthorities);
+        Map claims = new HashMap<String, Object>() {{
+            put("sub", username);
+            put("role", grantedAuthorities.stream().map(GrantedAuthority::toString).collect(Collectors.toList()));
         }};
         String JWT = Jwts.builder()
                 .setSubject(username)
@@ -52,15 +56,19 @@ class TokenAuthenticationService {
     static Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
-            // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
 
-            return user != null ?
-                    new UsernamePasswordAuthenticationToken(user, null, emptyList()) :
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET)
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody();
+
+            List<String> roleList = (List<String>) claims.get("role");
+
+            for (String r : roleList) System.out.println(r);
+            Collection<? extends GrantedAuthority> grantedAuthorities = roleList.stream()
+                    .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+            return claims.getSubject() != null ?
+                    new UsernamePasswordAuthenticationToken(claims.getSubject(), null, grantedAuthorities) :
                     null;
         }
         return null;
