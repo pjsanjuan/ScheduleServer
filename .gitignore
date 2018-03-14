@@ -77,3 +77,5 @@ buildNumber.properties
 src/test/java/com/patrick/DeleteTest.java
 /ScheduleServer.iml
 /src/test/java/com/patrick/DeleteTest.java
+/.idea/
+.idea/sqldialects.xml
