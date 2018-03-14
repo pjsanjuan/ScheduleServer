@@ -1,0 +1,1 @@
+INSERT INTO User (username, password, email, role) VALUES ('admin', 'password', 'admin@gmail.com', 2  )

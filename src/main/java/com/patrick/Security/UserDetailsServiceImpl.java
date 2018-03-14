@@ -2,13 +2,17 @@ package com.patrick.Security;
 
 import com.patrick.User.User;
 import com.patrick.User.UserService;
+import org.hibernate.mapping.Array;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -30,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return new org.springframework.security.core.userdetails.User(
                     optionalUser.get().getUsername(),
                     optionalUser.get().getPassword(),
-                    Collections.emptyList()
+                    Collections.singletonList(new SimpleGrantedAuthority(optionalUser.get().getRole().toString()))
             );
         throw new UsernameNotFoundException(username);
     }

@@ -34,8 +34,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("admin").password("password").roles("ADMIN");
-//        auth.userDetailsService(userDetailsService);
+//        auth.inMemoryAuthentication().withUser("admin").password("password").roles("ADMIN");
+        auth.userDetailsService(userDetailsService);
     }
 
 //    https://www.harinathk.com/spring/no-passwordencoder-mapped-id-null/

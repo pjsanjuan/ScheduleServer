@@ -1,14 +1,19 @@
 package com.patrick.Security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security
         .authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Collections.emptyList;
 
@@ -24,9 +29,13 @@ class TokenAuthenticationService {
      * @param res      HttpServletResponse object
      * @param username Username of authenticated principal
      */
-    static void addAuthentication(HttpServletResponse res, String username) {
+    static void addAuthentication(HttpServletResponse res, String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        Map claims = new HashMap<String, Collection>(){{
+            put("role", grantedAuthorities);
+        }};
         String JWT = Jwts.builder()
                 .setSubject(username)
+                .setClaims(claims)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();

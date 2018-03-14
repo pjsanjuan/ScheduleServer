@@ -1,6 +1,7 @@
 package com.patrick.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.patrick.Role.Role;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -21,6 +22,17 @@ public class User {
     @JsonIgnore
     @Column(name = "PASSWORD")
     private String password;
+
+    @Column(name = "ROLE")
+    private Role role;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public String getPassword() {
         return password;
