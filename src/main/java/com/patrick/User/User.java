@@ -13,14 +13,14 @@ public class User {
     @Column(name = "USER_ID")
     private Long id;
 
-    @Column(name = "USERNAME", unique = true)
+    @Column(name = "USERNAME", unique = true, nullable = false)
     private String username;
 
     @Column(name = "EMAIL", unique = true)
     private String email;
 
     @JsonIgnore
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
     @Column(name = "ROLE", nullable = false)

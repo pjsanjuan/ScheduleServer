@@ -14,18 +14,18 @@ public class Shift {
     @Column(name = "SHIFT_ID")
     private Long id;
 
-    @Column(name = "START")
+    @Column(name = "START", nullable = false)
     private OffsetDateTime start;
 
-    @Column(name = "END")
+    @Column(name = "END", nullable = false)
     private OffsetDateTime end;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User u;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "TASK_ID")
+    @JoinColumn(name = "TASK_ID", nullable = false)
     private Task task;
 
     public Shift() {
