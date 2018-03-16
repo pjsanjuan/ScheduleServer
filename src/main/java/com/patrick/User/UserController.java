@@ -6,16 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriBuilder;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/users")
