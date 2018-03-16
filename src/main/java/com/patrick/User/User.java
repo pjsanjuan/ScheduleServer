@@ -23,8 +23,8 @@ public class User {
     @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "ROLE")
-    private Role role;
+    @Column(name = "ROLE", nullable = false)
+    private Role role = Role.STUDENT;
 
     public Role getRole() {
         return role;
@@ -46,8 +46,8 @@ public class User {
     }
 
     public User(String username, String email) {
-        this.username = username.trim().toLowerCase();
-        this.email = email.trim().toLowerCase();
+        this.username = username;
+        this.email = email;
     }
 
     public Long getId() {

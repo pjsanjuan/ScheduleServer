@@ -2,6 +2,7 @@ package com.patrick.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -12,10 +13,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createOne(User u) throws DataIntegrityViolationException {
+        u.setPassword(passwordEncoder.encode(u.getPassword()));
         userRepository.save(u); //should throw exception if violating a constraint
     }
 

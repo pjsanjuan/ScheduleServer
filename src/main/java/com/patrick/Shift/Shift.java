@@ -1,18 +1,9 @@
 package com.patrick.Shift;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.patrick.Task.Task;
 import com.patrick.User.User;
 
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-
-
+import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 

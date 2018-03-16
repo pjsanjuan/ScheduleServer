@@ -1,5 +1,7 @@
 package com.patrick.Security;
 
+import com.patrick.User.User;
+
 public class AccountCredentials {
     private String username;
     private String password;
@@ -26,5 +28,12 @@ public class AccountCredentials {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public User toUser() {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        return user;
     }
 }
