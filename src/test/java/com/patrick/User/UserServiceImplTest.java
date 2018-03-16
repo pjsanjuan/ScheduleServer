@@ -8,28 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 public class UserServiceImplTest {
 
-    //https://docs.spring.io/spring-boot/docs/2.0.0.M5/api/org/springframework/boot/test/mock/mockito/MockBean.html
-    @TestConfiguration
-    @Import(UserServiceImpl.class)
-    static class Config {
-    }
-
     @Autowired
     private UserService userService;
-
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private PasswordEncoder passwordEncoder;
 
     @Before
     public void setUp() {
@@ -72,5 +66,11 @@ public class UserServiceImplTest {
     @Test
     public void test_modifyOne() {
 
+    }
+
+    //https://docs.spring.io/spring-boot/docs/2.0.0.M5/api/org/springframework/boot/test/mock/mockito/MockBean.html
+    @TestConfiguration
+    @Import(UserServiceImpl.class)
+    static class Config {
     }
 }
