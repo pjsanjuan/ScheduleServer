@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -31,12 +32,12 @@ public class UserRepositoryTest {
 
     @Test
     public void createUser() {
-        userRepository.saveAndFlush(new User("testuser", "test@gmail.com"));
+        userRepository.saveAndFlush(new User("testuser", "testpass"));
     }
 
     @Test
     public void findUser() {
-        User u = new User("testuser", "test@gmail.com");
+        User u = new User("testuser", "testpass");
         entityManager.persist(u);
         entityManager.flush();
 
@@ -47,12 +48,12 @@ public class UserRepositoryTest {
 
     @Test
     public void modifyUserIfExists() {
-        User u = new User("testuser", "test@gmail.com");
+        User u = new User("testuser", "testpass");
         entityManager.persist(u);
         entityManager.flush();
 
-        u.setEmail("modified@gmail.com");
         u.setUsername("modifiedUsername");
+        u.setPassword("modifiedPass");
         userRepository.saveAndFlush(u);
 
         Optional<User> found = userRepository.findById(u.getId());
@@ -63,9 +64,19 @@ public class UserRepositoryTest {
     @Test
     public void duplicateUser() {
         thrown.expect(DataIntegrityViolationException.class);
-        User u = new User("testuser", "test@gmail.com");
+        User u = new User("testuser", "testpass");
         userRepository.saveAndFlush(u);
-        User u2 = new User("testuser", "test@gmail.com");
+        User u2 = new User("testuser", "testpass");
         userRepository.saveAndFlush(u2);
+    }
+
+    @Test
+    public void findByUsername() {
+        User u = new User("testuser", "testpass");
+        entityManager.persist(u);
+        entityManager.flush();
+
+        User fetchedUser = userRepository.findByUsername("testuser");
+        assertNotNull(fetchedUser);
     }
 }
