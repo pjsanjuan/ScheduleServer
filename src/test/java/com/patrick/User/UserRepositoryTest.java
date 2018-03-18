@@ -17,8 +17,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
+
+@RunWith(SpringRunner.class) // docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/test/context/junit4/SpringJUnit4ClassRunner.html
+@DataJpaTest // docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/orm/jpa/DataJpaTest.html
 public class UserRepositoryTest {
 
     @Rule
