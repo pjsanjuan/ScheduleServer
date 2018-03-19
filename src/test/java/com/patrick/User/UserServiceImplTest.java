@@ -1,6 +1,5 @@
 package com.patrick.User;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -26,18 +25,6 @@ public class UserServiceImplTest {
     private UserRepository userRepository;
     @MockBean
     private PasswordEncoder passwordEncoder;
-
-//    @Before
-//    public void setUp() {
-//        User u = new User("test", "test@gmail.com");
-//        u.setId(1L);
-//
-//        List<User> users = new ArrayList<User>() {{
-//            add(u);
-//        }};
-//        Mockito.when(userRepository.findAll()).thenReturn(users);
-//        Mockito.when(userRepository.getOne(1L)).thenReturn(u);
-//    }
 
     @Test
     public void test_createOne() {
@@ -91,6 +78,7 @@ public class UserServiceImplTest {
     }
 
     @Test(expected = EntityNotFoundException.class)
+
     public void test_modifyOne_handles_errors_throw_when_saving() {
         //Setup
         Optional<User> emptyOptional = Optional.empty();
