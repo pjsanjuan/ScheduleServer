@@ -42,6 +42,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Database -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -54,13 +55,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>2.0.0.RELEASE</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
@@ -101,6 +95,13 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>2.0.0.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -111,6 +112,8 @@
             </plugin>
         </plugins>
     </build>
+
+
 
 
 </project>

@@ -10,7 +10,7 @@ public class Task {
     @Column(name = "TASK_ID")
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false)
     private String name;
 
     public Task() {

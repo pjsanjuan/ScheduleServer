@@ -13,41 +13,25 @@ public class User {
     @Column(name = "USER_ID")
     private Long id;
 
-    @Column(name = "USERNAME", unique = true)
+    @Column(name = "USERNAME", unique = true, nullable = false)
     private String username;
+
+    @JsonIgnore
+    @Column(name = "PASSWORD", nullable = false)
+    private String password;
 
     @Column(name = "EMAIL", unique = true)
     private String email;
 
-    @JsonIgnore
-    @Column(name = "PASSWORD")
-    private String password;
-
     @Column(name = "ROLE", nullable = false)
     private Role role = Role.STUDENT;
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public User() {
     }
 
-    public User(String username, String email) {
+    public User(String username, String password) {
         this.username = username;
-        this.email = email;
+        this.password = password;
     }
 
     public Long getId() {
@@ -66,6 +50,14 @@ public class User {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -74,15 +66,12 @@ public class User {
         this.email = email;
     }
 
-    /**
-     * Merges the other's fields into this as long as the field is not null.
-     *
-     * @param other Other User object to merge data from
-     */
-    public void merge(User other) {
-        this.id = other.id != null ? other.id : this.id;
-        this.username = other.username != null ? other.username : this.username;
-        this.email = other.email != null ? other.email : this.email;
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
@@ -92,21 +81,26 @@ public class User {
         User user = (User) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(username, user.username) &&
-                Objects.equals(email, user.email);
+                Objects.equals(password, user.password) &&
+                Objects.equals(email, user.email) &&
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, email);
+        return Objects.hash(id, username, password, email, role);
     }
+
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

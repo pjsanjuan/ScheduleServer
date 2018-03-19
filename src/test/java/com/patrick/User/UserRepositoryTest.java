@@ -5,21 +5,20 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 
 
 @RunWith(SpringRunner.class)
+// docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/test/context/junit4/SpringJUnit4ClassRunner.html
 @DataJpaTest
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+// docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/orm/jpa/DataJpaTest.html
 public class UserRepositoryTest {
 
     @Rule
@@ -32,42 +31,52 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    public void createUser(){
-        userRepository.saveAndFlush(new User("testuser", "test@gmail.com"));
+    public void createUser() {
+        userRepository.saveAndFlush(new User("testuser", "testpass"));
     }
 
     @Test
-    public void findUser(){
-        User u = new User("testuser", "test@gmail.com");
+    public void findUser() {
+        User u = new User("testuser", "testpass");
         entityManager.persist(u);
         entityManager.flush();
 
-        Optional<User> fetchedUser = userRepository.findById(1L);
+        Optional<User> fetchedUser = userRepository.findById(u.getId());
         assertTrue(fetchedUser.isPresent());
         assertEquals(u, fetchedUser.get());
     }
 
     @Test
-    public void modifyUserIfExists(){
-        User u = new User("testuser", "test@gmail.com");
+    public void modifyUserIfExists() {
+        User u = new User("testuser", "testpass");
         entityManager.persist(u);
         entityManager.flush();
 
-        u.setEmail("modified@gmail.com");
         u.setUsername("modifiedUsername");
+        u.setPassword("modifiedPass");
         userRepository.saveAndFlush(u);
 
-        Optional<User> found = userRepository.findById(1L);
+        Optional<User> found = userRepository.findById(u.getId());
         assertTrue(found.isPresent());
         assertEquals(found.get(), u);
     }
 
     @Test
-    public void duplicateUser(){
+    public void duplicateUser() {
         thrown.expect(DataIntegrityViolationException.class);
-        User u = new User("testuser", "test@gmail.com");
+        User u = new User("testuser", "testpass");
         userRepository.saveAndFlush(u);
-        User u2 = new User("testuser", "test@gmail.com");
+        User u2 = new User("testuser", "testpass");
         userRepository.saveAndFlush(u2);
+    }
+
+    @Test
+    public void findByUsername() {
+        User u = new User("testuser", "testpass");
+        entityManager.persist(u);
+        entityManager.flush();
+
+        User fetchedUser = userRepository.findByUsername("testuser");
+        assertNotNull(fetchedUser);
     }
 }

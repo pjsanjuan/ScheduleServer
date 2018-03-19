@@ -1,105 +1,121 @@
 package com.patrick.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.patrick.Security.AccountCredentials;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(UserController.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = {UserController.class})
 public class UserControllerTest {
 
     @Autowired
-    private MockMvc mvc;
-
+    UserController userController;
     @MockBean
     private UserService userService;
-
-    @MockBean
-    UserRepository userRepository;
-
+    private MockMvc mvc;
 
     @Before
     public void setUp() {
-        Mockito.when(userService.fetchOne(1L)).thenReturn(new User("testuser", "test@gmail.com"));
+        mvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @Test
-    public void getUsers() throws Exception {
-        Mockito.when(userService.fetchAll()).thenReturn(new ArrayList<User>() {{
-            add(new User("testuser", "test@gmail.com"));
-            add(new User("Rick James", "rj@gmail.com"));
-        }});
-        mvc.perform(get("/users")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+    public void test_getUsers_Normal() throws Exception {
+        //Setup
+        Mockito.doReturn(Collections.emptyList()).when(userService).fetchAll();
+        //Exercise and Assert
+        mvc.perform(get("/users")).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+
     @Test
-    public void getOneUser() throws Exception {
-        Mockito.doReturn(new User("test", "test@gmail.com"))
+    public void test_getOneUser_Normal() throws Exception {
+        //Setup
+        Mockito.doReturn(new User("test", "testpass"))
                 .when(userService).fetchOne(1L);
-        mvc.perform(get("/users/1")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        //Exercise and Assert
+        mvc.perform(get("/users/1")).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    public void test_getOneUser_NotExist() throws Exception {
+        //Setup
+        Mockito.doReturn(null).when(userService).fetchOne(1L);
+        //Exercise and Assert
+        mvc.perform(get("/users/1")).andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    public void createUser_NoDuplicate() throws Exception {
+    public void test_createUser_Normal() throws Exception {
+        //Setup
         ObjectMapper objectMapper = new ObjectMapper();
-        User u = new User("Harrison Ford", "hf@gmail.com");
-        String jsonString = objectMapper.writeValueAsString(u);
+        AccountCredentials credentials = new AccountCredentials("test", "testpass");
+        String jsonString = objectMapper.writeValueAsString(credentials);
+
+        //Resultant user after taking in the Account Credentials
+        User u = new User();
+        u.setUsername(credentials.getUsername());
+        u.setPassword(credentials.getPassword());
+        //Exercise and Assert
         mvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
-        ).andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
+        ).andExpect(MockMvcResultMatchers.status().isCreated());
+        //Verify
         Mockito.verify(userService).createOne(u);
     }
 
     @Test
-    public void createUser_Duplicate() throws Exception {
-        User u = new User("testuser", "test@gmail.com");
-        Mockito.doNothing()
-                .doThrow(new DataIntegrityViolationException(""))
+    public void test_createUser_Duplicate() throws Exception {
+        //Setup
+        AccountCredentials credentials = new AccountCredentials("testuser", "testpass");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(credentials);
+        //Resultant user after taking in the Account Credentials
+        User u = new User();
+        u.setUsername(credentials.getUsername());
+        u.setPassword(credentials.getPassword());
+        //Stub
+        Mockito.doThrow(new DataIntegrityViolationException(""))
                 .when(userService).createOne(u);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(u);
-
-        //First create call
-        mvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonString)
-        ).andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
-
-        //Duplicate create call
+        //Exercise and Assert
         mvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
         ).andExpect(MockMvcResultMatchers.status().isConflict()).andReturn();
 
-        Mockito.verify(userService, Mockito.times(2)).createOne(u);
+        //Verify
+        Mockito.verify(userService).createOne(u);
     }
 
     @Test
-    public void updateUser() throws Exception {
-        User u = new User("Harrison Ford", "hf@gmail.com");
-        Mockito.doNothing().when(userService).modifyOne(u);
+    public void test_updateUser_Normal() throws Exception {
+        //Setup
+        User u = new User("testuser", "testpass");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(u);
+        //Stub
+        Mockito.doNothing().when(userService).modifyOne(u);
 
+        //Exercise
         mvc.perform(put("/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
