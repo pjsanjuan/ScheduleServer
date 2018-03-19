@@ -2,7 +2,6 @@ package com.patrick.Shift;
 
 import com.patrick.Task.Task;
 import com.patrick.User.User;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

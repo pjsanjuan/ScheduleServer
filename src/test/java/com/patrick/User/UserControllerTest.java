@@ -34,7 +34,7 @@ public class UserControllerTest {
 
     @Before
     public void setUp() {
-        this.mvc = MockMvcBuilders.standaloneSetup(userController).build();
+        mvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @Test
