@@ -86,9 +86,30 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <version>2.9.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-test -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>5.0.3.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.0.4.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -130,13 +151,11 @@
                         <format>html</format>
                         <format>xml</format>
                     </formats>
-                    <check />
+                    <check/>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-
 
 
 </project>
