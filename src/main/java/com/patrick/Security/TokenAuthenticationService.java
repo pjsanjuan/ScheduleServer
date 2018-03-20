@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class TokenAuthenticationService {
-    static final long EXPIRATIONTIME = 864_000_000; // 10 days
-    static final String SECRET = "DongCena";
-    static final String TOKEN_PREFIX = "Bearer";
-    static final String HEADER_STRING = "Authorization";
+public class TokenAuthenticationService {
+    private static final long EXPIRATIONTIME = 864_000_000; // 10 days
+    private static final String SECRET = "DongCena";
+    private static final String TOKEN_PREFIX = "Bearer";
+    private static final String HEADER_STRING = "Authorization";
 
     /**
      * Adds a singed JWT to the specified response object with the specified username
@@ -25,17 +25,10 @@ class TokenAuthenticationService {
      * @param res      HttpServletResponse object
      * @param username Username of authenticated principal
      */
-    static void addAuthentication(HttpServletResponse res, String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
-        Map claims = new HashMap<String, Object>() {{
-            put("sub", username);
-            put("role", grantedAuthorities.stream().map(GrantedAuthority::toString).collect(Collectors.toList()));
-        }};
-        String JWT = Jwts.builder()
-                .setSubject(username)
-                .setClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
-                .compact();
+    public static void addAuthentication(HttpServletResponse res,
+                                         String username,
+                                         Collection<? extends GrantedAuthority> grantedAuthorities) {
+        String JWT = createToken(username, grantedAuthorities);
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
     }
 
@@ -46,7 +39,7 @@ class TokenAuthenticationService {
      * @param request HttpServletRequest object
      * @return Authentication object populated with the valid user
      */
-    static Authentication getAuthentication(HttpServletRequest request) {
+    public static Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
 
@@ -65,5 +58,25 @@ class TokenAuthenticationService {
                     null;
         }
         return null;
+    }
+
+    /**
+     * Creates a JWT token from the with the specified username and granted authorities.
+     *
+     * @param username           Username of sub
+     * @param grantedAuthorities Collection of GrantedAuthorities
+     * @return JWT token
+     */
+    public static String createToken(String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        Map claims = new HashMap<String, Object>() {{
+            put("sub", username);
+            put("role", grantedAuthorities.stream().map(GrantedAuthority::toString).collect(Collectors.toList()));
+        }};
+        return Jwts.builder()
+                .setSubject(username)
+                .setClaims(claims)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .compact();
     }
 }
