@@ -29,10 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 /**
  * Architecture for this test borrowed from: https://stackoverflow.com/a/45247733/3893713
+ * Test cases from the perspective of a STUDENT
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserApiIntegrationTest {
+public class UserApiStudentIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 
