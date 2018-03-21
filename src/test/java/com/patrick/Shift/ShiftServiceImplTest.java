@@ -2,6 +2,7 @@ package com.patrick.Shift;
 
 import com.patrick.Task.Task;
 import com.patrick.User.User;
+import com.patrick.User.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,8 @@ public class ShiftServiceImplTest {
     private ShiftService shiftService;
     @MockBean
     private ShiftRepository shiftRepository;
-
+    @MockBean
+    private UserRepository userRepository;
     //Test Data
     private User testUser1 = new User("Rick", "r@gmail.com");
     private User testUser2 = new User("Morty", "m@gmail.com");
@@ -40,6 +42,13 @@ public class ShiftServiceImplTest {
         testUser1.setId(1L);
         testUser2.setId(2L);
         testShift1.setId(1L);
+    }
+
+    @Test
+    public void test_fetchAllByUsername() {
+        Mockito.doReturn(Collections.singletonList(testShift1)).when(shiftRepository).findByUser(testUser1);
+        Collection<Shift> shifts = shiftRepository.findByUser(testUser1);
+        assertEquals(1, shifts.size());
     }
 
     @Test
@@ -105,4 +114,6 @@ public class ShiftServiceImplTest {
     @Import(ShiftServiceImpl.class)
     static class Config {
     }
+
+
 }

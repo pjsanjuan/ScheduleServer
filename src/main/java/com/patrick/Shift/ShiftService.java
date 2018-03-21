@@ -8,6 +8,8 @@ import java.util.Collection;
 public interface ShiftService {
     Collection<Shift> fetchAll();
 
+    Collection<Shift> fetchAllByUsername(String username);
+
     Shift fetchOne(Long id) throws EntityNotFoundException;
 
     void createOne(Shift s) throws DataIntegrityViolationException;
@@ -15,4 +17,5 @@ public interface ShiftService {
     void modifyOne(Shift s) throws EntityNotFoundException;
 
     void deleteOne(Long id);
+
 }
