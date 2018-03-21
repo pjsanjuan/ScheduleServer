@@ -2,6 +2,8 @@ package com.patrick.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.patrick.Security.AccountCredentials;
+import com.patrick.Shift.Shift;
+import com.patrick.Shift.ShiftService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +32,9 @@ public class UserControllerTest {
     UserController userController;
     @MockBean
     private UserService userService;
+    @MockBean
+    private ShiftService shiftService;
+
     private MockMvc mvc;
 
     @Before
@@ -43,6 +48,17 @@ public class UserControllerTest {
         Mockito.doReturn(Collections.emptyList()).when(userService).fetchAll();
         //Exercise and Assert
         mvc.perform(get("/users")).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void test_getUserShifts() throws Exception {
+        User testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testuser");
+        testUser.setPassword("testpass");
+        //Setup
+        Mockito.doReturn(Collections.singletonList(new Shift())).when(shiftService).findShiftsByUsername(testUser.getUsername());
+        mvc.perform(get("/users/testuser/shifts")).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
 
