@@ -47,23 +47,6 @@ public class ShiftRepositoryTest {
     }
 
     @Test
-    public void fetchAllByUser() {
-        //Setup
-        User u = new User("testuser", "testuser@gmail.com");
-        userRepository.saveAndFlush(u); //Has ID of 1
-        Task t = new Task("Cleanup");
-        taskRepository.saveAndFlush(t); //has ID of 1
-        Shift s = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), u, t);
-        entityManager.persist(s);
-        entityManager.flush();
-
-
-        Collection<Shift> shifts = shiftRepository.findByUser(u);
-        assertNotNull(shifts);
-        assertEquals(1, shifts.size());
-    }
-
-    @Test
     public void createNewShift() {
         User u = new User("testuser", "testuser@gmail.com");
         userRepository.save(u); //Has ID of 1

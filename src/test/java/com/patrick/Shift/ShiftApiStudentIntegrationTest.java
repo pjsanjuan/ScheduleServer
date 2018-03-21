@@ -1,11 +1,13 @@
 package com.patrick.Shift;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.patrick.Security.TokenAuthenticationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -31,7 +33,7 @@ public class ShiftApiStudentIntegrationTest {
 
     private MockMvc mvc;
     private String jwt = TokenAuthenticationService
-            .createToken("student", Collections.singletonList(new SimpleGrantedAuthority("student")));
+            .createToken("student", Collections.singletonList(new SimpleGrantedAuthority("STUDENT")));
 
     @Before
     public void setup() {
@@ -60,6 +62,8 @@ public class ShiftApiStudentIntegrationTest {
     public void test_createShift() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/shifts")
                 .header("Authorization", jwt)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(new ObjectMapper().writeValueAsString(new Shift()))
         ).andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
@@ -67,6 +71,8 @@ public class ShiftApiStudentIntegrationTest {
     public void test_updateShift() throws Exception {
         mvc.perform(MockMvcRequestBuilders.put("/shifts/1")
                 .header("Authorization", jwt)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(new ObjectMapper().writeValueAsString(new Shift()))
         ).andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
