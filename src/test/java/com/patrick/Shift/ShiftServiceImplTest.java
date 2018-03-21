@@ -2,9 +2,11 @@ package com.patrick.Shift;
 
 import com.patrick.Task.Task;
 import com.patrick.User.User;
+import com.patrick.User.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -29,6 +31,8 @@ public class ShiftServiceImplTest {
     private ShiftService shiftService;
     @MockBean
     private ShiftRepository shiftRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     //Test Data
     private User testUser1 = new User("Rick", "r@gmail.com");
@@ -47,6 +51,14 @@ public class ShiftServiceImplTest {
         Mockito.when(shiftRepository.findAll()).thenReturn(Collections.emptyList());
         Collection<Shift> shift = shiftService.fetchAll();
         assertEquals(Collections.emptyList(), shift);
+    }
+
+    @Test
+    public void test_findShiftsByUsername() {
+        Mockito.doReturn(Collections.singletonList(new Shift())).when(shiftRepository).findShiftsByUser(testUser1);
+        Mockito.doReturn(testUser1).when(userRepository).findByUsername(testUser1.getUsername());
+        Collection<Shift> shifts = shiftService.findShiftsByUsername(testUser1.getUsername());
+        assertEquals(1, shifts.size());
     }
 
     @Test

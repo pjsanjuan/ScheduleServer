@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,6 +28,22 @@ public class ShiftRepositoryTest {
     UserRepository userRepository;
     @Autowired
     TaskRepository taskRepository;
+
+
+    @Test
+    public void test_findShiftsByUser() {
+        //Setup
+        User u = new User("testuser", "testpass");
+        userRepository.save(u); //Has ID of 1
+        Task t = new Task("Cleanup");
+        taskRepository.save(t); //has ID of 1
+        Shift s = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), u, t);
+        entityManager.persist(s);
+        entityManager.flush();
+
+        Collection<Shift> shifts = shiftRepository.findShiftsByUser(u);
+        assertEquals(1, shifts.size());
+    }
 
     @Test
     public void createNewShift() {
