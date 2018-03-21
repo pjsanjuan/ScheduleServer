@@ -26,17 +26,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class LoginIntegrationTest {
 
     @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
     private WebApplicationContext context;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
     private MockMvc mvc;
 
     @Before

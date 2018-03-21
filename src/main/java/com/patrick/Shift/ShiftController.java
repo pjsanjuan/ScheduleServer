@@ -60,7 +60,7 @@ public class ShiftController {
         try {
             shiftService.deleteOne(id);
             return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body("Shift with ID: " + id + "could not be found");
         }
     }

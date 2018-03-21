@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -17,6 +18,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
+//https://docs.spring.io/spring-security/site/docs/3.1.x/reference/el-access.html
 public class UserController {
 
     private UserService userService;
@@ -29,16 +31,19 @@ public class UserController {
     }
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<Collection<User>> getUsers() {
         return new ResponseEntity<>(userService.fetchAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<User> getOneUser(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(userService.fetchOne(id), HttpStatus.OK);
+    @GetMapping("/{username}")
+    @PreAuthorize("#username == principal")
+    ResponseEntity<User> getOneUser(@PathVariable("username") String username) {
+        return new ResponseEntity<>(userService.fetchOneByUsername(username), HttpStatus.OK);
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> createUser(@RequestBody AccountCredentials credentials) {
         User user = new User();
         user.setUsername(credentials.getUsername());

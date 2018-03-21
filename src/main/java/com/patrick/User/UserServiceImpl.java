@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findOneByUsername(String username) {
-        return Optional.of(userRepository.findByUsername(username));
+    public User fetchOneByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

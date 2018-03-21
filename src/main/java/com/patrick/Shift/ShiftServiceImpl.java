@@ -23,6 +23,13 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     @Override
+    public Collection<Shift> fetchAllByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        return shiftRepository.findByUser(user);
+    }
+
+
+    @Override
     public Collection<Shift> fetchAll() {
         return shiftRepository.findAll();
     }

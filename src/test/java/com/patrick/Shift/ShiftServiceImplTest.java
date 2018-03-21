@@ -31,9 +31,8 @@ public class ShiftServiceImplTest {
     private ShiftService shiftService;
     @MockBean
     private ShiftRepository shiftRepository;
-    @MockBean
+@MockBean
     private UserRepository userRepository;
-
     //Test Data
     private User testUser1 = new User("Rick", "r@gmail.com");
     private User testUser2 = new User("Morty", "m@gmail.com");

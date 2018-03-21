@@ -9,10 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.assertj.ApplicationContextAssert;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,26 +20,23 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Collections;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 /**
  * Architecture for this test borrowed from: https://stackoverflow.com/a/45247733/3893713
+ * Test cases from the perspective of a STUDENT
  */
+//https://docs.spring.io/spring-security/site/docs/3.1.x/reference/el-access.html
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserApiIntegrationTest {
-    @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
-    private UserRepository userRepository;
-
+public class UserApiStudentIntegrationTest {
     @Autowired
     ObjectMapper objectMapper;
-
+    @Autowired
+    private WebApplicationContext context;
+    @Autowired
+    private UserRepository userRepository;
     private MockMvc mvc;
     private String jwt = TokenAuthenticationService
             .createToken("testuser", Collections.singletonList(new SimpleGrantedAuthority("STUDENT")));
@@ -65,18 +60,29 @@ public class UserApiIntegrationTest {
     public void test_getUsers() throws Exception {
         mvc.perform(get("/users")
                 .header("Authorization", jwt)
+        ).andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    public void test_getOneUser_Self() throws Exception {
+        //Setup data
+        User user = new User("testuser", "testpass");
+        userRepository.saveAndFlush(user); //should have ID 1
+
+        mvc.perform(get("/users/testuser")
+                .header("Authorization", jwt)
         ).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    public void test_getOneUser() throws Exception {
+    public void test_getOneUser_Other() throws Exception {
         //Setup data
         User user = new User("testuser", "testpass");
-        userRepository.saveAndFlush(user);
+        userRepository.saveAndFlush(user); //should have ID 1
 
-        mvc.perform(get("/users/1")
+        mvc.perform(get("/users/wronguser")
                 .header("Authorization", jwt)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        ).andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @Test

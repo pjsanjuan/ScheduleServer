@@ -4,7 +4,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
-import java.util.Optional;
 
 
 public interface UserService {
@@ -16,5 +15,5 @@ public interface UserService {
 
     void modifyOne(User u) throws EntityNotFoundException;
 
-    Optional<User> findOneByUsername(String username);
+    User fetchOneByUsername(String username) throws EntityNotFoundException;
 }
