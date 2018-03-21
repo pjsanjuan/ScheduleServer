@@ -1,6 +1,9 @@
 package com.patrick.User;
 
 import com.patrick.Security.AccountCredentials;
+import com.patrick.Shift.Shift;
+import com.patrick.Shift.ShiftService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,10 +20,12 @@ import java.util.Collection;
 public class UserController {
 
     private UserService userService;
+    private ShiftService shiftService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ShiftService shiftService) {
         this.userService = userService;
+        this.shiftService = shiftService;
     }
 
     @GetMapping("")
@@ -43,10 +48,10 @@ public class UserController {
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User passed is a duplicate.");
         }
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/" + user.getUsername()).build().toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/" + user.getUsername()).build()
+                .toUri();
         return ResponseEntity.created(location).build();
     }
-
 
     @PutMapping("/{id}")
     ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable("id") Long id) {
@@ -57,5 +62,10 @@ public class UserController {
             return ResponseEntity.badRequest().body("User with ID: " + id + "could not be found");
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{username}/shifts")
+    Collection<Shift> getUserShifts(@PathVariable("username") String username) {
+        return shiftService.findShiftsByUsername(username);
     }
 }

@@ -22,7 +22,7 @@ public class Shift {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "USER_ID", nullable = false)
-    private User u;
+    private User user;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "TASK_ID", nullable = false)
@@ -31,10 +31,10 @@ public class Shift {
     public Shift() {
     }
 
-    public Shift(OffsetDateTime start, OffsetDateTime end, User u, Task task) {
+    public Shift(OffsetDateTime start, OffsetDateTime end, User user, Task task) {
         this.start = start;
         this.end = end;
-        this.u = u;
+        this.user = user;
         this.task = task;
     }
 
@@ -62,12 +62,12 @@ public class Shift {
         this.end = end;
     }
 
-    public User getU() {
-        return u;
+    public User getUser() {
+        return user;
     }
 
-    public void setU(User u) {
-        this.u = u;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Task getTask() {
@@ -85,7 +85,7 @@ public class Shift {
                 "id=" + id +
                 ", start=" + start +
                 ", end=" + end +
-                ", u=" + u +
+                ", user=" + user +
                 ", task=" + task +
                 '}';
     }
@@ -98,13 +98,13 @@ public class Shift {
         return Objects.equals(id, shift.id) &&
                 Objects.equals(start, shift.start) &&
                 Objects.equals(end, shift.end) &&
-                Objects.equals(u, shift.u) &&
+                Objects.equals(user, shift.user) &&
                 Objects.equals(task, shift.task);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, start, end, u, task);
+        return Objects.hash(id, start, end, user, task);
     }
 }

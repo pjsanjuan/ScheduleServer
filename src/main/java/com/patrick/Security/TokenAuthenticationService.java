@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TokenAuthenticationService {
     private static final long EXPIRATIONTIME = 864_000_000; // 10 days
@@ -68,10 +69,11 @@ public class TokenAuthenticationService {
      * @return JWT token
      */
     public static String createToken(String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
-        Map claims = new HashMap<String, Object>() {{
+        Map<String, Object> claims = new HashMap<String, Object>() {{
             put("sub", username);
             put("role", grantedAuthorities.stream().map(GrantedAuthority::toString).collect(Collectors.toList()));
         }};
+
         return Jwts.builder()
                 .setSubject(username)
                 .setClaims(claims)

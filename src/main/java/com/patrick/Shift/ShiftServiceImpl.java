@@ -1,5 +1,7 @@
 package com.patrick.Shift;
 
+import com.patrick.User.User;
+import com.patrick.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,15 +14,23 @@ import java.util.Optional;
 public class ShiftServiceImpl implements ShiftService {
 
     private ShiftRepository shiftRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public ShiftServiceImpl(ShiftRepository shiftRepository) {
+    public ShiftServiceImpl(ShiftRepository shiftRepository, UserRepository userRepository) {
         this.shiftRepository = shiftRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Collection<Shift> fetchAll() {
         return shiftRepository.findAll();
+    }
+
+    @Override
+    public Collection<Shift> findShiftsByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        return shiftRepository.findShiftsByUser(user);
     }
 
     @Override

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RunWith(SpringRunner.class)
 public class UserServiceImplTest {
@@ -47,15 +49,13 @@ public class UserServiceImplTest {
         User fetchedUser = userService.fetchOne(1L);
         //Verify
         Mockito.verify(userRepository).getOne(1L);
-        org.junit.Assert.assertEquals((Long) 1L, u.getId());
+        org.junit.Assert.assertEquals((Long) 1L, fetchedUser.getId());
     }
 
     @Test
     public void test_fetchAll() {
         //Setup
-        List<User> users = new ArrayList<User>() {{
-            add(new User("testuser", "testpass"));
-        }};
+        List<User> users = Stream.of(new User("testuser", "testpass")).collect(Collectors.toList());
         Mockito.when(userRepository.findAll()).thenReturn(users);
         //Exercise
         Collection<User> fetchedUsers = userService.fetchAll();

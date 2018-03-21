@@ -45,7 +45,7 @@ public class ShiftServiceImplTest {
     @Test
     public void test_fetchAll() {
         Mockito.when(shiftRepository.findAll()).thenReturn(Collections.emptyList());
-        Collection shift = shiftService.fetchAll();
+        Collection<Shift> shift = shiftService.fetchAll();
         assertEquals(Collections.emptyList(), shift);
     }
 
