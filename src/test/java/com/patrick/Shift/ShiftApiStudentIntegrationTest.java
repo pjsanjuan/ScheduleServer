@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+//https://docs.spring.io/spring-security/site/docs/3.1.x/reference/el-access.html
 public class ShiftApiStudentIntegrationTest {
     @Autowired
     private WebApplicationContext context;

@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
  * Architecture for this test borrowed from: https://stackoverflow.com/a/45247733/3893713
  * Test cases from the perspective of a STUDENT
  */
+//https://docs.spring.io/spring-security/site/docs/3.1.x/reference/el-access.html
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserApiStudentIntegrationTest {
@@ -66,18 +67,29 @@ public class UserApiStudentIntegrationTest {
     public void test_getUsers() throws Exception {
         mvc.perform(get("/users")
                 .header("Authorization", jwt)
+        ).andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    public void test_getOneUser_Self() throws Exception {
+        //Setup data
+        User user = new User("testuser", "testpass");
+        userRepository.saveAndFlush(user); //should have ID 1
+
+        mvc.perform(get("/users/testuser")
+                .header("Authorization", jwt)
         ).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    public void test_getOneUser() throws Exception {
+    public void test_getOneUser_Other() throws Exception {
         //Setup data
         User user = new User("testuser", "testpass");
-        userRepository.saveAndFlush(user);
+        userRepository.saveAndFlush(user); //should have ID 1
 
-        mvc.perform(get("/users/1")
+        mvc.perform(get("/users/wronguser")
                 .header("Authorization", jwt)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        ).andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @Test
