@@ -3,7 +3,6 @@ package com.patrick.User;
 import com.patrick.Security.AccountCredentials;
 import com.patrick.Shift.Shift;
 import com.patrick.Shift.ShiftService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -25,6 +24,9 @@ public class UserController {
     private ShiftService shiftService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     public UserController(UserService userService, ShiftService shiftService) {
         this.userService = userService;
         this.shiftService = shiftService;
@@ -37,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    @PreAuthorize("#username == principal")
+    @PreAuthorize("#username == principal OR hasAuthority('ADMIN')")
     User getOneUser(@PathVariable("username") String username) {
         return userService.fetchOneByUsername(username);
     }
@@ -58,14 +60,18 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("")
-    ResponseEntity<?> updateUser(@RequestBody User user) {
+    @PutMapping("/{username}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable("username") String username) {
         try {
-            userService.modifyOne(user);
+//            User dbUser = userRepository.findByUsername(username);
+            User dbUser2 = userService.fetchOneByUsername(username);
+            dbUser2.setEmail(user.getEmail());
+            userService.modifyOne(dbUser2);
+            return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body("User with ID: " + user.getUsername() + "could not be found");
         }
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{username}/shifts")
