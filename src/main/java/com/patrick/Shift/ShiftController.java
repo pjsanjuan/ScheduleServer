@@ -24,14 +24,14 @@ public class ShiftController {
 
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPERVISOR')")
-    ResponseEntity<Collection<Shift>> getShifts() {
-        return new ResponseEntity<>(shiftService.fetchAll(), HttpStatus.OK);
+    Collection<Shift> getShifts() {
+        return shiftService.fetchAll();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPERVISOR')")
-    ResponseEntity<Shift> getOneShift(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(shiftService.fetchOne(id), HttpStatus.OK);
+    Shift getOneShift(@PathVariable("id") Long id) {
+        return shiftService.fetchOne(id);
     }
 
     @PostMapping("")

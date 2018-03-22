@@ -32,14 +32,14 @@ public class UserController {
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<Collection<User>> getUsers() {
-        return new ResponseEntity<>(userService.fetchAll(), HttpStatus.OK);
+    Collection<User> getUsers() {
+        return userService.fetchAll();
     }
 
     @GetMapping("/{username}")
     @PreAuthorize("#username == principal")
-    ResponseEntity<User> getOneUser(@PathVariable("username") String username) {
-        return new ResponseEntity<>(userService.fetchOneByUsername(username), HttpStatus.OK);
+    User getOneUser(@PathVariable("username") String username) {
+        return userService.fetchOneByUsername(username);
     }
 
     @PostMapping("")
@@ -58,13 +58,12 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable("id") Long id) {
+    @PutMapping("")
+    ResponseEntity<?> updateUser(@RequestBody User user) {
         try {
-            user.setId(id);
             userService.modifyOne(user);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.badRequest().body("User with ID: " + id + "could not be found");
+            return ResponseEntity.badRequest().body("User with ID: " + user.getUsername() + "could not be found");
         }
         return ResponseEntity.ok().build();
     }

@@ -35,6 +35,7 @@ public class UserControllerTest {
     @MockBean
     private ShiftService shiftService;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
     private MockMvc mvc;
 
     @Before
@@ -81,7 +82,6 @@ public class UserControllerTest {
     @Test
     public void test_createUser_Normal() throws Exception {
         //Setup
-        ObjectMapper objectMapper = new ObjectMapper();
         AccountCredentials credentials = new AccountCredentials("test", "testpass");
         String jsonString = objectMapper.writeValueAsString(credentials);
 
@@ -102,7 +102,6 @@ public class UserControllerTest {
     public void test_createUser_Duplicate() throws Exception {
         //Setup
         AccountCredentials credentials = new AccountCredentials("testuser", "testpass");
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(credentials);
         //Resultant user after taking in the Account Credentials
         User u = new User();
@@ -126,13 +125,10 @@ public class UserControllerTest {
     public void test_updateUser_Normal() throws Exception {
         //Setup
         User u = new User("testuser", "testpass");
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(u);
-        //Stub
-        Mockito.doNothing().when(userService).modifyOne(u);
 
         //Exercise
-        mvc.perform(put("/users/1")
+        mvc.perform(put("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
         ).andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
