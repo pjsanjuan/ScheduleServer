@@ -38,6 +38,8 @@ public class UserControllerTest {
     private UserService userService;
     @MockBean
     private ShiftService shiftService;
+    @MockBean
+    private UserRepository userRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
     private MockMvc mvc;
@@ -139,10 +141,12 @@ public class UserControllerTest {
     public void test_updateUser_Normal() throws Exception {
         //Setup
         User u = new User("testuser", "testpass");
+        u.setId(1L);
         String jsonString = objectMapper.writeValueAsString(u);
+        Mockito.doReturn(u).when(userService).fetchOneByUsername("testuser");
 
         //Exercise
-        mvc.perform(put("/users")
+        mvc.perform(put("/users/testuser")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
         ).andExpect(status().is2xxSuccessful()).andReturn();

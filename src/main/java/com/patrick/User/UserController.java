@@ -64,10 +64,9 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable("username") String username) {
         try {
-//            User dbUser = userRepository.findByUsername(username);
-            User dbUser2 = userService.fetchOneByUsername(username);
-            dbUser2.setEmail(user.getEmail());
-            userService.modifyOne(dbUser2);
+            User dbUser = userService.fetchOneByUsername(username);
+            dbUser.setEmail(user.getEmail());
+            userService.modifyOne(dbUser);
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body("User with ID: " + user.getUsername() + "could not be found");
