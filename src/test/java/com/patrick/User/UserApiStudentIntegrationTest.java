@@ -3,6 +3,7 @@ package com.patrick.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.patrick.Security.AccountCredentials;
 import com.patrick.Security.TokenAuthenticationService;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,8 @@ import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 /**
  * Architecture for this test borrowed from: https://stackoverflow.com/a/45247733/3893713
@@ -58,9 +61,8 @@ public class UserApiStudentIntegrationTest {
 
     @Test
     public void test_getUsers() throws Exception {
-        mvc.perform(get("/users")
-                .header("Authorization", jwt)
-        ).andExpect(MockMvcResultMatchers.status().isForbidden());
+        mvc.perform(get("/users").header("Authorization", jwt))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @Test
@@ -69,9 +71,9 @@ public class UserApiStudentIntegrationTest {
         User user = new User("testuser", "testpass");
         userRepository.saveAndFlush(user); //should have ID 1
 
-        mvc.perform(get("/users/testuser")
-                .header("Authorization", jwt)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(get("/users/testuser").header("Authorization", jwt))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.username", Matchers.is("testuser")));
     }
 
     @Test

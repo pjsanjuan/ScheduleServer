@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.patrick.Security.AccountCredentials;
 import com.patrick.Shift.Shift;
 import com.patrick.Shift.ShiftService;
+import com.patrick.Task.Task;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,12 +18,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
@@ -40,7 +44,10 @@ public class UserControllerTest {
 
     @Before
     public void setUp() {
-        mvc = MockMvcBuilders.standaloneSetup(userController).build();
+        mvc = MockMvcBuilders
+                .standaloneSetup(userController)
+                .alwaysDo(print())
+                .build();
     }
 
     @Test
@@ -48,7 +55,7 @@ public class UserControllerTest {
         //Setup
         Mockito.doReturn(Collections.emptyList()).when(userService).fetchAll();
         //Exercise and Assert
-        mvc.perform(get("/users")).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(get("/users")).andExpect(status().isOk());
     }
 
     @Test
@@ -57,26 +64,34 @@ public class UserControllerTest {
         testUser.setId(1L);
         testUser.setUsername("testuser");
         testUser.setPassword("testpass");
-        //Setup
-        Mockito.doReturn(Collections.singletonList(new Shift())).when(shiftService).findShiftsByUsername(testUser.getUsername());
-        mvc.perform(get("/users/testuser/shifts")).andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        Task t = new Task("Cleanup");
+        Shift testShift = new Shift(OffsetDateTime.now(), OffsetDateTime.now(), testUser, t);
 
+        //Setup
+        Mockito.doReturn(Collections.singletonList(testShift)).when(shiftService).findShiftsByUsername(testUser.getUsername());
+        mvc.perform(get("/users/testuser/shifts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(1)));
+
+    }
 
     @Test
     public void test_getOneUser_Normal() throws Exception {
         //Setup
-        Mockito.doReturn(new User("test", "testpass"))
-                .when(userService).fetchOne(1L);
+        User user = new User("testuser", "testpass");
+        Mockito.doReturn(user).when(userService).fetchOneByUsername(user.getUsername());
         //Exercise and Assert
-        mvc.perform(get("/users/1")).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(get("/users/" + user.getUsername()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", Matchers.is("testuser")))
+                .andExpect(jsonPath("$.password").doesNotExist());
     }
 
     public void test_getOneUser_NotExist() throws Exception {
         //Setup
         Mockito.doReturn(null).when(userService).fetchOne(1L);
         //Exercise and Assert
-        mvc.perform(get("/users/1")).andExpect(MockMvcResultMatchers.status().isNotFound());
+        mvc.perform(get("/users/1")).andExpect(status().isNotFound());
     }
 
     @Test
@@ -90,10 +105,9 @@ public class UserControllerTest {
         u.setUsername(credentials.getUsername());
         u.setPassword(credentials.getPassword());
         //Exercise and Assert
-        mvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonString)
-        ).andExpect(MockMvcResultMatchers.status().isCreated());
+        mvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
         //Verify
         Mockito.verify(userService).createOne(u);
     }
@@ -115,7 +129,7 @@ public class UserControllerTest {
         mvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
-        ).andExpect(MockMvcResultMatchers.status().isConflict()).andReturn();
+        ).andExpect(status().isConflict()).andReturn();
 
         //Verify
         Mockito.verify(userService).createOne(u);
@@ -131,6 +145,6 @@ public class UserControllerTest {
         mvc.perform(put("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString)
-        ).andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
+        ).andExpect(status().is2xxSuccessful()).andReturn();
     }
 }
