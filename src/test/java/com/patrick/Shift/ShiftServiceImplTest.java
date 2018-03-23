@@ -6,7 +6,6 @@ import com.patrick.User.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 @RunWith(SpringRunner.class)
@@ -31,7 +30,7 @@ public class ShiftServiceImplTest {
     private ShiftService shiftService;
     @MockBean
     private ShiftRepository shiftRepository;
-@MockBean
+    @MockBean
     private UserRepository userRepository;
     //Test Data
     private User testUser1 = new User("Rick", "r@gmail.com");
@@ -61,16 +60,17 @@ public class ShiftServiceImplTest {
     }
 
     @Test
-    public void test_fetchOne_Normal() {
-        Mockito.doReturn(testShift1).when(shiftRepository).getOne(1L);
-        Shift shift = shiftService.fetchOne(1L);
-        assertEquals(testShift1, shift);
+    public void test_getOne_Normal() {
+        Mockito.doReturn(Optional.of(testShift1)).when(shiftRepository).findById(1L);
+        Optional<Shift> shift = shiftService.getOne(1L);
+        assertTrue(shift.isPresent());
     }
 
-    @Test(expected = EntityNotFoundException.class)
-    public void test_fetchOne_NotFound() {
+    @Test
+    public void test_getOne_NotFound() {
         Mockito.doThrow(new EntityNotFoundException()).when(shiftRepository).getOne(1L);
-        shiftService.fetchOne(1L);
+        Optional<Shift> shift = shiftService.getOne(1L);
+        assertFalse(shift.isPresent());
     }
 
     @Test

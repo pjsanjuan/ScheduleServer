@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.persistence.EntityNotFoundException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/shifts")
@@ -30,8 +31,10 @@ public class ShiftController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPERVISOR')")
-    Shift getOneShift(@PathVariable("id") Long id) {
-        return shiftService.fetchOne(id);
+    ResponseEntity<?> getOneShift(@PathVariable("id") Long id) {
+        Optional<Shift> shift = shiftService.getOne(id);
+        if (shift.isPresent()) return new ResponseEntity<>(shift.get(), HttpStatus.OK);
+        else return ResponseEntity.notFound().build();
     }
 
     @PostMapping("")

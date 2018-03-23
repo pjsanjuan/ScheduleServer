@@ -22,12 +22,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @RunWith(SpringRunner.class)
@@ -76,7 +75,7 @@ public class ShiftControllerTest {
 
     @Test
     public void test_getOneShift_Normal() throws Exception {
-        Mockito.doReturn(testShift1).when(shiftService).fetchOne(1L);
+        Mockito.doReturn(Optional.of(testShift1)).when(shiftService).getOne(1L);
 
         mvc.perform(get("/shifts/1"))
                 .andExpect(status().isOk())
@@ -84,7 +83,7 @@ public class ShiftControllerTest {
     }
 
     public void test_getOneShift_NotFound() throws Exception {
-        Mockito.doThrow(new EntityNotFoundException()).when(shiftService).fetchOne(1L);
+        Mockito.doThrow(new EntityNotFoundException()).when(shiftService).getOne(1L);
 
         mvc.perform(get("/shifts/1")).andExpect(status().isBadRequest());
     }

@@ -34,8 +34,8 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     @Override
-    public Shift fetchOne(Long id) throws EntityNotFoundException {
-        return shiftRepository.getOne(id);
+    public Optional<Shift> getOne(Long id) {
+        return shiftRepository.findById(id);
     }
 
     @Override

@@ -7,13 +7,14 @@ import javax.persistence.EntityNotFoundException;
 import com.patrick.User.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface ShiftService {
     Collection<Shift> fetchAll();
 
     Collection<Shift> findShiftsByUsername(String username);
 
-    Shift fetchOne(Long id) throws EntityNotFoundException;
+    Optional<Shift> getOne(Long id);
 
     void createOne(Shift s) throws DataIntegrityViolationException;
 
